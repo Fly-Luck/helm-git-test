@@ -1,19 +1,25 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  # app名字
   name: helm-guestbook-1
+  # app定义存放的namespace
   namespace: argocd
+  # app同步波次
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
 spec:
+  # app中的资源同步的目标集群和namespace，即具体的k8s资源创建在哪里
   destination:
     namespace: helm-guestbook-1
     server: {{ .Values.spec.destination.server }}
   project: default
+  # app中k8s资源的定义来源
   source:
     path: helm-guestbook
     repoURL: {{ .Values.spec.source.repoURL }}
     targetRevision: {{ .Values.spec.source.targetRevision }}
+  # 同步策略，建议关掉因为git变动就会触发argocd sync
   syncPolicy:
     automated:
       prune: true
